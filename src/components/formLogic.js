@@ -1,10 +1,6 @@
 export const formLogicFn = (t) => {
     const appBase = () => (typeof window !== 'undefined' && window.APP_BASE_PATH) || '';
-    const appOrigin = () => {
-        const pub = typeof window !== 'undefined' && window.APP_PUBLIC_ORIGIN;
-        if (pub) return pub + appBase();
-        return window.location.origin + appBase();
-    };
+    const appOrigin = () => window.location.origin + appBase();
     const apiPath = (path) => appBase() + path;
 
     window.formData = function () {

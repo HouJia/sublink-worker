@@ -11,6 +11,7 @@ services:
       - "58087:8787"
     environment:
       BASE_PATH: /sublink
+      LAN_SERVICE_BASE: http://192.168.0.6:58087/sublink
       PORT: 8787
       REDIS_HOST: sublink-redis
       REDIS_PORT: 6379

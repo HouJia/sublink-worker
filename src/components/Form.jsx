@@ -14,7 +14,7 @@ const LINK_FIELDS = [
 ];
 
 export const Form = (props) => {
-  const { t, lang, basePath = '', publicOrigin = '' } = props;
+  const { t, lang, basePath = '', lanServiceBase = '' } = props;
 
   const translations = {
     processing: t('processing'),
@@ -42,7 +42,7 @@ export const Form = (props) => {
     window.PREDEFINED_RULE_SETS = ${JSON.stringify(PREDEFINED_RULE_SETS)};
     window.APP_LANG = ${JSON.stringify(lang || 'zh-CN')};
     window.APP_BASE_PATH = ${JSON.stringify(basePath || '')};
-    window.APP_PUBLIC_ORIGIN = ${JSON.stringify(publicOrigin || '')};
+    window.APP_LAN_SERVICE_BASE = ${JSON.stringify(lanServiceBase || '')};
     if (typeof __name === 'undefined') { var __name = function(fn) { return fn; }; }
     (${formLogicFn.toString()})();
   `;
@@ -139,6 +139,16 @@ export const Form = (props) => {
         <option value="comprehensive">{t('comprehensive')}</option>
       </select>
           </div>
+
+  {lanServiceBase ? (
+    <p class="mb-4 text-sm text-gray-500 dark:text-gray-400 flex items-start gap-2">
+      <i class="fas fa-network-wired mt-0.5 text-primary-500"></i>
+      <span>
+        {t('lanServiceHint')}{' '}
+        <a href={lanServiceBase} class="text-primary-600 dark:text-primary-400 hover:underline break-all" target="_blank" rel="noopener noreferrer">{lanServiceBase}</a>
+      </span>
+    </p>
+  ) : null}
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
     {UNIFIED_RULES.map((rule) => (
