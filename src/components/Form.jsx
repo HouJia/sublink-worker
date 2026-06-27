@@ -140,16 +140,6 @@ export const Form = (props) => {
       </select>
           </div>
 
-  {lanServiceBase ? (
-    <p class="mb-4 text-sm text-gray-500 dark:text-gray-400 flex items-start gap-2">
-      <i class="fas fa-network-wired mt-0.5 text-primary-500"></i>
-      <span>
-        {t('lanServiceHint')}{' '}
-        <a href={lanServiceBase} class="text-primary-600 dark:text-primary-400 hover:underline break-all" target="_blank" rel="noopener noreferrer">{lanServiceBase}</a>
-      </span>
-    </p>
-  ) : null}
-
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
     {UNIFIED_RULES.map((rule) => (
       <label class="flex items-center p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors group">
@@ -249,6 +239,20 @@ export const Form = (props) => {
         <span x-text={`subconverterCopied ? '${t('copiedSubconverterUrl')}' : '${t('copySubconverterUrl')}'`}></span>
       </button>
     </div>
+    {lanServiceBase ? (
+      <p class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400 flex items-start gap-2">
+        <i class="fas fa-network-wired mt-0.5 text-primary-500"></i>
+        <span>
+          {t('lanSubconverterHint')}{' '}
+          <a
+            href="#"
+            class="text-primary-600 dark:text-primary-400 hover:underline break-all font-mono text-xs"
+            x-bind:href="getLanSubconverterUrl()"
+            x-text="getLanSubconverterUrl()"
+          ></a>
+        </span>
+      </p>
+    ) : null}
   </div>
 
   {/* Base Config */ }

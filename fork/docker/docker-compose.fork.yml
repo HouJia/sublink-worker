@@ -1,4 +1,5 @@
 # HouJia fork：子路径 /sublink/ + Redis KV
+# QNAP：worker 须加入默认 bridge，NPM 才能经 192.168.x.x:58087 反代（与 mmw:8080 一致）
 services:
   sublink-worker:
     build:
@@ -7,6 +8,8 @@ services:
     image: sublink-worker:hjs-fork
     container_name: sublink-worker
     restart: unless-stopped
+    networks:
+      - default
     ports:
       - "58087:8787"
     environment:
@@ -23,6 +26,8 @@ services:
     image: redis:7-alpine
     container_name: sublink-redis
     restart: unless-stopped
+    networks:
+      - default
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     volumes:
       - sublink-redis-data:/data

@@ -198,17 +198,17 @@ export const formLogicFn = (t) => {
             },
 
             getSubconverterUrl() {
-                const origin = appOrigin();
-                const params = new URLSearchParams();
+                const queryString = this.buildSubconverterParams().toString();
+                return appOrigin() + '/subconverter' + (queryString ? '?' + queryString : '');
+            },
 
-                // Use preset name directly if a predefined rule set is selected
+            buildSubconverterParams() {
+                const params = new URLSearchParams();
                 if (this.selectedPredefinedRule && this.selectedPredefinedRule !== 'custom') {
                     params.append('selectedRules', this.selectedPredefinedRule);
                 } else if (this.selectedPredefinedRule === 'custom') {
                     params.append('selectedRules', JSON.stringify(this.selectedRules));
                 }
-
-                // Include customRules when available (best-effort; may make URL long)
                 try {
                     const customRulesInput = document.querySelector('input[name="customRules"]');
                     const customRules = customRulesInput && customRulesInput.value ? JSON.parse(customRulesInput.value) : [];
@@ -216,23 +216,24 @@ export const formLogicFn = (t) => {
                         params.append('customRules', JSON.stringify(customRules));
                     }
                 } catch { }
-
                 if (!this.includeAutoSelect) {
                     params.append('include_auto_select', 'false');
                 }
-
                 if (this.groupByCountry) {
                     params.append('group_by_country', 'true');
                 }
-
-                // Include lang parameter so subconverter gets correct group names
                 const appLang = window.APP_LANG || 'zh-CN';
                 if (appLang !== 'zh-CN') {
                     params.append('lang', appLang);
                 }
+                return params;
+            },
 
-                const queryString = params.toString();
-                return origin + '/subconverter' + (queryString ? '?' + queryString : '');
+            getLanSubconverterUrl() {
+                const lanBase = (typeof window !== 'undefined' && window.APP_LAN_SERVICE_BASE) || '';
+                if (!lanBase) return '';
+                const queryString = this.buildSubconverterParams().toString();
+                return lanBase.replace(/\/$/, '') + '/subconverter' + (queryString ? '?' + queryString : '');
             },
 
             copySubconverterUrl() {
