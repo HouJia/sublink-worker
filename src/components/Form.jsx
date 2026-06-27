@@ -14,7 +14,7 @@ const LINK_FIELDS = [
 ];
 
 export const Form = (props) => {
-  const { t, lang, basePath = '' } = props;
+  const { t, lang, basePath = '', publicOrigin = '' } = props;
 
   const translations = {
     processing: t('processing'),
@@ -42,6 +42,7 @@ export const Form = (props) => {
     window.PREDEFINED_RULE_SETS = ${JSON.stringify(PREDEFINED_RULE_SETS)};
     window.APP_LANG = ${JSON.stringify(lang || 'zh-CN')};
     window.APP_BASE_PATH = ${JSON.stringify(basePath || '')};
+    window.APP_PUBLIC_ORIGIN = ${JSON.stringify(publicOrigin || '')};
     if (typeof __name === 'undefined') { var __name = function(fn) { return fn; }; }
     (${formLogicFn.toString()})();
   `;

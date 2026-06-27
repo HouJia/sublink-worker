@@ -45,6 +45,7 @@ export function createApp(bindings = {}) {
         const lang = resolveLanguage(c.get('lang'));
         const subtitle = APP_SUBTITLE[lang] || APP_SUBTITLE['zh-CN'];
         const pageBasePath = c.get('basePath') || '';
+        const pagePublicOrigin = runtime.config?.publicOrigin || '';
 
         return c.html(
             <Layout title={t('pageTitle')} description={t('pageDescription')} keywords={t('pageKeywords')} basePath={pageBasePath}>
@@ -61,7 +62,7 @@ export function createApp(bindings = {}) {
                                         {subtitle}
                                     </p>
                                 </div>
-                                <Form t={t} lang={lang} basePath={pageBasePath} />
+                                <Form t={t} lang={lang} basePath={pageBasePath} publicOrigin={pagePublicOrigin} />
                             </div>
                         </div>
                     </main>
