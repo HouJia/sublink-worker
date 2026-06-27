@@ -2,7 +2,7 @@ import http from 'http';
 import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 
-export function startNodeHttpServer(app, { port = 8787, logger = console } = {}) {
+export function startNodeHttpServer(app, { port = 8787, logger = console, basePath = '' } = {}) {
     const server = http.createServer(async (req, res) => {
         try {
             const request = toRequest(req);
@@ -16,7 +16,8 @@ export function startNodeHttpServer(app, { port = 8787, logger = console } = {})
     });
 
     server.listen(port, () => {
-        logger.info?.(`Sublink worker running on http://0.0.0.0:${port}`);
+        const suffix = basePath ? ` (BASE_PATH=${basePath})` : '';
+        logger.info?.(`Sublink worker running on http://0.0.0.0:${port}${suffix}`);
     });
 
     return server;

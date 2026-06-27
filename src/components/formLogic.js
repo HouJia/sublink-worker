@@ -1,4 +1,8 @@
 export const formLogicFn = (t) => {
+    const appBase = () => (typeof window !== 'undefined' && window.APP_BASE_PATH) || '';
+    const appOrigin = () => window.location.origin + appBase();
+    const apiPath = (path) => appBase() + path;
+
     window.formData = function () {
         // Inline parseSurgeConfigInput to make it available in toString()
         const parseSurgeValue = (rawValue = '') => {
@@ -194,7 +198,7 @@ export const formLogicFn = (t) => {
             },
 
             getSubconverterUrl() {
-                const origin = window.location.origin;
+                const origin = appOrigin();
                 const params = new URLSearchParams();
 
                 // Use preset name directly if a predefined rule set is selected
@@ -265,7 +269,7 @@ export const formLogicFn = (t) => {
 
                 this.savingConfig = true;
                 try {
-                    const response = await fetch('/config', {
+                    const response = await fetch(apiPath('/config'), {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -371,7 +375,7 @@ export const formLogicFn = (t) => {
                     const customRules = customRulesInput && customRulesInput.value ? JSON.parse(customRulesInput.value) : [];
 
                     // Construct URLs
-                    const origin = window.location.origin;
+                    const origin = appOrigin();
                     const params = new URLSearchParams();
                     params.append('config', this.input);
                     params.append('ua', this.customUA);
@@ -429,7 +433,7 @@ export const formLogicFn = (t) => {
 
                 this.shortening = true;
                 try {
-                    const origin = window.location.origin;
+                    const origin = appOrigin();
                     const shortened = {};
 
                     // Use custom short code if provided, otherwise let backend generate it once
@@ -439,7 +443,7 @@ export const formLogicFn = (t) => {
                     // Shorten each link type
                     for (const [type, url] of Object.entries(this.generatedLinks)) {
                         try {
-                            let apiUrl = `${origin}/shorten-v2?url=${encodeURIComponent(url)}`;
+                            let apiUrl = `${appOrigin()}/shorten-v2?url=${encodeURIComponent(url)}`;
 
                             // For the first request, either use custom code or let backend generate
                             // For subsequent requests, use the code from first request
@@ -468,7 +472,7 @@ export const formLogicFn = (t) => {
                                 surge: 's'
                             };
 
-                            shortened[type] = `${origin}/${prefixMap[type]}/${returnedCode}`;
+                            shortened[type] = `${appOrigin()}/${prefixMap[type]}/${returnedCode}`;
                         } catch (error) {
                             console.error(`Error shortening ${type} link:`, error);
                             throw error;
@@ -550,7 +554,7 @@ export const formLogicFn = (t) => {
 
                     if (shortMatch) {
                         // It's a short link, resolve it first
-                        const response = await fetch(`/resolve?url=${encodeURIComponent(text)}`);
+                        const response = await fetch(apiPath(`/resolve?url=${encodeURIComponent(text)}`));
                         if (!response.ok) {
                             console.warn('Failed to resolve short URL');
                             return;

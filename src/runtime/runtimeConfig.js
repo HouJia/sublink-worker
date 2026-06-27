@@ -13,6 +13,8 @@
  * @typedef {Object} RuntimeConfig
  * @property {number} [configTtlSeconds]
  * @property {number} [shortLinkTtlSeconds]
+ * @property {string} [basePath]
+ * @property {string} [publicOrigin]
  */
 
 /**
@@ -40,7 +42,9 @@ export function normalizeRuntime(runtime = {}) {
         logger: runtime.logger ?? console,
         config: {
             configTtlSeconds: runtime.config?.configTtlSeconds ?? DEFAULTS.configTtlSeconds,
-            shortLinkTtlSeconds: runtime.config?.shortLinkTtlSeconds ?? null
+            shortLinkTtlSeconds: runtime.config?.shortLinkTtlSeconds ?? null,
+            basePath: runtime.config?.basePath ?? '',
+            publicOrigin: runtime.config?.publicOrigin ?? ''
         }
     };
 }

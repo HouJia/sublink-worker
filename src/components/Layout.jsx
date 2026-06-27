@@ -2,7 +2,8 @@ import { html } from 'hono/html'
 import { APP_KEYWORDS } from '../constants.js';
 
 export const Layout = (props) => {
-  const { title, children } = props
+  const { title, children, basePath = '' } = props
+  const faviconHref = basePath ? `${basePath}/favicon.ico` : '/favicon.ico'
   return html`
     <!DOCTYPE html>
     <html lang="en" x-data="appData()">
@@ -12,7 +13,7 @@ export const Layout = (props) => {
         <title>${title}</title>
         <meta name="description" content="Convert and optimize your subscription links easily" />
         <meta name="keywords" content="${APP_KEYWORDS}" />
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="${faviconHref}" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />

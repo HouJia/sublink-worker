@@ -16,6 +16,7 @@ import { ShortLinkService } from '../services/shortLinkService.js';
 import { ConfigStorageService } from '../services/configStorageService.js';
 import { ServiceError, MissingDependencyError } from '../services/errors.js';
 import { normalizeRuntime } from '../runtime/runtimeConfig.js';
+import { withBase } from '../runtime/basePath.js';
 import { PREDEFINED_RULE_SETS, SING_BOX_CONFIG, SING_BOX_CONFIG_V1_11, generateSubconverterConfig } from '../config/index.js';
 
 const DEFAULT_USER_AGENT = 'curl/7.74.0';
@@ -28,12 +29,14 @@ export function createApp(bindings = {}) {
     };
 
     const app = new Hono();
+    const basePath = runtime.config?.basePath || '';
 
     app.use('*', async (c, next) => {
         const acceptLanguage = getRequestHeader(c.req, 'Accept-Language');
         const lang = c.req.query('lang') || acceptLanguage?.split(',')[0] || 'zh-CN';
         c.set('lang', lang);
         c.set('t', createTranslator(lang));
+        c.set('basePath', basePath);
         await next();
     });
 
@@ -41,11 +44,12 @@ export function createApp(bindings = {}) {
         const t = c.get('t');
         const lang = resolveLanguage(c.get('lang'));
         const subtitle = APP_SUBTITLE[lang] || APP_SUBTITLE['zh-CN'];
+        const pageBasePath = c.get('basePath') || '';
 
         return c.html(
-            <Layout title={t('pageTitle')} description={t('pageDescription')} keywords={t('pageKeywords')}>
+            <Layout title={t('pageTitle')} description={t('pageDescription')} keywords={t('pageKeywords')} basePath={pageBasePath}>
                 <div class="flex flex-col min-h-screen">
-                    <Navbar />
+                    <Navbar basePath={pageBasePath} />
                     <main class="flex-1">
                         <div class="container mx-auto px-4 py-8 pt-24">
                             <div class="max-w-4xl mx-auto">
@@ -57,7 +61,7 @@ export function createApp(bindings = {}) {
                                         {subtitle}
                                     </p>
                                 </div>
-                                <Form t={t} lang={lang} />
+                                <Form t={t} lang={lang} basePath={pageBasePath} />
                             </div>
                         </div>
                     </main>
@@ -340,7 +344,8 @@ export function createApp(bindings = {}) {
             if (!originalParam) return c.text('Short URL not found', 404);
 
             const url = new URL(c.req.url);
-            return c.redirect(`${url.origin}/${prefix}${originalParam}`);
+            const bp = c.get('basePath') || '';
+            return c.redirect(`${url.origin}${withBase(bp, `/${prefix}${originalParam}`)}`);
         } catch (error) {
             return handleError(c, error, runtime.logger);
         }
@@ -389,7 +394,8 @@ export function createApp(bindings = {}) {
             if (!originalParam) return c.text(t('shortUrlNotFound'), 404);
 
             const mapping = { b: 'singbox', c: 'clash', x: 'xray', s: 'surge' };
-            const originalUrl = `${urlObj.origin}/${mapping[prefix]}${originalParam}`;
+            const bp = c.get('basePath') || '';
+            const originalUrl = `${urlObj.origin}${withBase(bp, `/${mapping[prefix]}${originalParam}`)}`;
             return c.json({ originalUrl });
         } catch (error) {
             return handleError(c, error, runtime.logger);

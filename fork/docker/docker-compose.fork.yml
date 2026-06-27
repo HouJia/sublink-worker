@@ -1,0 +1,31 @@
+# HouJia fork：子路径 /sublink/ + Redis KV
+services:
+  sublink-worker:
+    build:
+      context: ../..
+      dockerfile: fork/docker/Dockerfile.fork
+    image: sublink-worker:hjs-fork
+    container_name: sublink-worker
+    restart: unless-stopped
+    ports:
+      - "58087:8787"
+    environment:
+      BASE_PATH: /sublink
+      PORT: 8787
+      REDIS_HOST: sublink-redis
+      REDIS_PORT: 6379
+      REDIS_KEY_PREFIX: sublink
+      CONFIG_TTL_SECONDS: 2592000
+    depends_on:
+      - sublink-redis
+  sublink-redis:
+    image: redis:7-alpine
+    container_name: sublink-redis
+    restart: unless-stopped
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - sublink-redis-data:/data
+      - ../../redis.conf:/usr/local/etc/redis/redis.conf:ro
+
+volumes:
+  sublink-redis-data:

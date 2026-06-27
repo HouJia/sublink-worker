@@ -3,15 +3,19 @@ import { createFileAssetFetcher } from '../adapters/assets/fileAssetFetcher.js';
 import { UpstashKVAdapter } from '../adapters/kv/upstashKv.js';
 import { MemoryKVAdapter } from '../adapters/kv/memoryKv.js';
 import { RedisKVAdapter } from '../adapters/kv/redisKv.js';
+import { basePathFromEnv } from './basePath.js';
 
 export function createNodeRuntime(env = process.env) {
+    const basePathConfig = basePathFromEnv(env);
     return {
         kv: resolveKv(env),
         assetFetcher: createFileAssetFetcher(env.STATIC_DIR || 'public'),
         logger: console,
         config: {
             configTtlSeconds: parseNumber(env.CONFIG_TTL_SECONDS) || undefined,
-            shortLinkTtlSeconds: parseNumber(env.SHORT_LINK_TTL_SECONDS) || null
+            shortLinkTtlSeconds: parseNumber(env.SHORT_LINK_TTL_SECONDS) || null,
+            basePath: basePathConfig.basePath,
+            publicOrigin: basePathConfig.publicOrigin
         }
     };
 }
